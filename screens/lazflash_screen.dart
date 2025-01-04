@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tes_lazada/widgets/product_card.dart'; // Impor file ProductCard
+import 'package:tes_lazada/widgets/product_card.dart';
 
 class LazFlashPage extends StatefulWidget {
   @override
@@ -77,56 +77,64 @@ class _LazFlashPageState extends State<LazFlashPage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            height: 170,
-            margin: const EdgeInsets.symmetric(horizontal: 6.5),
-            padding: const EdgeInsets.symmetric(horizontal: 6.5),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CarouselSlider.builder(
-                itemCount: promoImages.length,
-                itemBuilder: (context, index, realIndex) {
-                  return Image.asset(
-                    promoImages[index],
-                    fit: BoxFit.cover,
-                  );
-                },
-                options: CarouselOptions(
-                  height: 170,
-                  viewportFraction: 1.0,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Carousel
+            Container(
+              height: 170,
+              margin: const EdgeInsets.symmetric(horizontal: 6.5),
+              padding: const EdgeInsets.symmetric(horizontal: 6.5),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CarouselSlider.builder(
+                  itemCount: promoImages.length,
+                  itemBuilder: (context, index, realIndex) {
+                    return Image.asset(
+                      promoImages[index],
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: 170,
+                    viewportFraction: 1.0,
+                    enableInfiniteScroll: true,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: GridView.builder(
+
+            // Product Grid
+            Padding(
               padding: const EdgeInsets.all(8.0),
-              itemCount: products.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.7,
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: products.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.7,
+                ),
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return ProductCard(
+                    imageUrl: product["imageUrl"],
+                    productName: product["productName"],
+                    price: product["price"],
+                    location: product["location"],
+                    rating: product["rating"],
+                  );
+                },
               ),
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return ProductCard(
-                  imageUrl: product["imageUrl"],
-                  productName: product["productName"],
-                  price: product["price"],
-                  location: product["location"],
-                  rating: product["rating"],
-                );
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
