@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Untuk gambar SVG
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tes_lazada/widgets/product_card.dart'; // Impor file ProductCard
 
 class LazFlashPage extends StatefulWidget {
   @override
@@ -8,11 +9,19 @@ class LazFlashPage extends StatefulWidget {
 }
 
 class _LazFlashPageState extends State<LazFlashPage> {
-  bool isDarkMode = false; // Variabel untuk menentukan mode terang/gelap
+  bool isDarkMode = false;
 
-  final List<String> products = List.filled(8, "Sandal Jepit Anti Slip"); // Daftar produk (dummy data)
+  final List<Map<String, dynamic>> products = List.generate(
+    8,
+    (index) => {
+      "imageUrl": "https://dummyimage.com/200x200/000/fff&text=Product",
+      "productName": "Sandal Jepit Anti Slip",
+      "price": "Rp. 25.000",
+      "location": "Jakarta Utara",
+      "rating": 4.4,
+    },
+  );
 
-  // Daftar gambar promo dari folder assets
   final List<String> promoImages = [
     'assets/images/image_1.png',
     'assets/images/image_2.png',
@@ -21,7 +30,6 @@ class _LazFlashPageState extends State<LazFlashPage> {
     'assets/images/image_5.png',
   ];
 
-  // Fungsi untuk toggle antara mode terang dan mode gelap
   void toggleDarkMode() {
     setState(() {
       isDarkMode = !isDarkMode;
@@ -37,17 +45,17 @@ class _LazFlashPageState extends State<LazFlashPage> {
         title: Row(
           children: [
             SvgPicture.asset(
-              'assets/icons/lazada_icon.svg', // Path ke file SVG logo Lazada
-              height: 18, // Ukuran logo
+              'assets/icons/lazada_icon.svg',
+              height: 18,
             ),
-            const SizedBox(width: 12), // Jarak antara logo dan search bar
+            const SizedBox(width: 12),
             Expanded(
               child: Container(
                 height: 36,
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     filled: true,
                     fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                     border: OutlineInputBorder(
@@ -58,7 +66,7 @@ class _LazFlashPageState extends State<LazFlashPage> {
                 ),
               ),
             ),
-            const SizedBox(width: 12), // Jarak antara search bar dan dark mode icon
+            const SizedBox(width: 12),
             IconButton(
               icon: Icon(
                 isDarkMode ? Icons.dark_mode : Icons.light_mode,
@@ -71,109 +79,51 @@ class _LazFlashPageState extends State<LazFlashPage> {
       ),
       body: Column(
         children: [
-          // Promo Banner
           Container(
-            height: 170, // Tinggi promo banner
+            height: 170,
             margin: const EdgeInsets.symmetric(horizontal: 6.5),
-            padding: const EdgeInsets.symmetric(horizontal: 6.5), // Margin kiri dan kanan
+            padding: const EdgeInsets.symmetric(horizontal: 6.5),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12), // Sudut promo banner melengkung
+              borderRadius: BorderRadius.circular(12),
               child: CarouselSlider.builder(
                 itemCount: promoImages.length,
                 itemBuilder: (context, index, realIndex) {
-                  return _buildBannerImage(promoImages[index]);
+                  return Image.asset(
+                    promoImages[index],
+                    fit: BoxFit.cover,
+                  );
                 },
                 options: CarouselOptions(
                   height: 170,
                   viewportFraction: 1.0,
                   enableInfiniteScroll: true,
                   autoPlay: true,
-                  autoPlayInterval: Duration(seconds: 3),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  autoPlayInterval: const Duration(seconds: 3),
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
                 ),
               ),
             ),
           ),
-
-          // GridView untuk Produk
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(8.0), // Padding pada grid produk
+              padding: const EdgeInsets.all(8.0),
               itemCount: products.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // Jumlah kolom
-                mainAxisSpacing: 10, // Jarak antar baris
-                crossAxisSpacing: 10, // Jarak antar kolom
-                childAspectRatio: 0.7, // Rasio ukuran elemen grid
+                crossAxisCount: 3,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 0.7,
               ),
               itemBuilder: (context, index) {
-                return _buildProductCard();
+                final product = products[index];
+                return ProductCard(
+                  imageUrl: product["imageUrl"],
+                  productName: product["productName"],
+                  price: product["price"],
+                  location: product["location"],
+                  rating: product["rating"],
+                );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Fungsi untuk menampilkan gambar pada banner promo
-  Widget _buildBannerImage(String assetPath) {
-    return Image.asset(
-      assetPath, // Path gambar yang diambil dari daftar promoImages
-      fit: BoxFit.cover, // Gambar memenuhi area banner
-    );
-  }
-
-  // Fungsi untuk menampilkan kartu produk
-  Widget _buildProductCard() {
-    return Card(
-      elevation: 2, // Shadow pada kartu
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Image.network(
-              "https://dummyimage.com/200x200/000/fff&text=Product",
-              fit: BoxFit.cover,
-              width: double.infinity,
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            child: Text(
-              "Sandal Jepit Anti Slip",
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              "Rp. 25.000",
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            child: Row(
-              children: [
-                Icon(Icons.star, size: 14, color: Colors.orange),
-                Text("4.4", style: TextStyle(fontSize: 12)),
-              ],
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              children: [
-                Icon(Icons.location_on, size: 14, color: Colors.grey),
-                SizedBox(width: 4),
-                Text("Jakarta Utara", style: TextStyle(fontSize: 12)),
-              ],
             ),
           ),
         ],
